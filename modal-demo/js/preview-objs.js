@@ -229,7 +229,7 @@
                 var faceVertices = line.split(/\s+/);
                 var fixedVertex = faceVertices[1];
 
-                for ( let k = 2; k <= faceVertices.length - 2; k++ ) {
+                for ( var k = 2; k <= faceVertices.length - 2; k++ ) {
                     fileAsStringTriangulated += 'f' + ' ' + fixedVertex
                                                     + ' ' + faceVertices[k]
                                                     + ' ' + faceVertices[k + 1] + '\n';
