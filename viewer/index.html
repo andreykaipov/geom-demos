@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="An OBJ 3D Model Viewer">
+    <meta name="author" content="Andrey Kaipov">
+
+    <title>OBJ Viewer</title>
+
+    <!-- jQuery UI CSS. -->
+    <!-- <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.10.4/themes/pepper-grinder/jquery-ui.css"> -->
+
+    <!-- Custom styles for this page. -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body id="graphicsContainer">
+
+    <div class="sidebar">
+        <input type="file" id="i_file" value="">
+        <ul>
+            <a download="" id="download_link">Download triangulated .obj file</a>
+            <hr id="download_hreaker">
+            <li id="vertices"></li>
+            <li id="edges"></li>
+            <li id="faces"></li>
+            <li id="genus"></li>
+        </ul>
+    </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!-- jQuery and jQuery UI. Don't need.
+
+    <script src="https://code.jquery.com/ui/1.12.0-beta.1/jquery-ui.min.js"></script>  -->
+
+    <!-- Core Three.js library plus extras. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script>
+    <script src="http://ocelot.aul.fiu.edu/~akaip002/js-libraries/OBJLoader.js"></script>     <!-- For actually loading .obj files -->
+    <script src="http://ocelot.aul.fiu.edu/~akaip002/js-libraries/TransformControls.js"></script> <!-- For mouse object controls. -->
+    <script src="http://ocelot.aul.fiu.edu/~akaip002/js-libraries/OrbitControls.js"></script> <!-- For mouse camera controls. -->
+    <script src="https://rawgit.com/jeromeetienne/threex.keyboardstate/master/threex.keyboardstate.js"></script> <!-- For keyboard camera controls. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5.1/dat.gui.min.js"></script>   <!-- For fancy GUI sliders -->
+    <script src="http://ocelot.aul.fiu.edu/~akaip002/js-libraries/Projector.js"></script>
+
+    <!-- Some CSS to make the gui text larger. -->
+    <style>
+    .dg {
+        color: #fff;
+        font-size: 14px;
+        text-shadow: none !important;
+    }
+
+    .dg li:not(.folder) {
+        /*background: rgba(0, 0, 0, 1); !! transparency of gui makes the folders buggy when closed. */
+        border-bottom: 1px solid #ddd;
+    }
+    </style>
+
+    <!-- This code is the actual assignment. -->
+    <script src="js/triangulate.js"></script>   <!-- Triangulate script -->
+    <script src="js/xyzAxes.js"></script>       <!-- Displays debug axes -->
+    <script src="js/obj_viewer.js"></script>    <!-- Displays the model -->
+    <script src="js/updates.js"></script>       <!-- Update functions to be passed to the GUI -->
+    <script src="js/gui.js"></script>           <!-- Make the GUI functional -->
+
+    <!-- Google analytics. -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-70865218-2', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+</body>
+</html>

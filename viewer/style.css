@@ -1,0 +1,27 @@
+body {
+    margin: 0px;
+}
+
+canvas {
+    display: block;
+}
+
+.sidebar {
+    position: fixed;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.sidebar hr {
+    display: none;
+    width: 80px;
+    margin-left: 0;
+}
+
+.sidebar a {
+    display: none;
+}
