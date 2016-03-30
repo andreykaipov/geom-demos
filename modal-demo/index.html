@@ -27,10 +27,19 @@
                     <h4 class="modal-title">
                         <!-- obj name will go here. -->
                     </h4>
-                    <a type="button" class="download-obj btn btn-xs btn-default"><span class="glyphicon glyphicon-arrow-down"></span> Download</a>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Options <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" class="download-obj-btn"><i class="glyphicon glyphicon-arrow-down"></i> Download</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#" class="ocrift-view-btn"><i class="glyphicon glyphicon-sunglasses"></i> Oculus Rift View</a></li>
+                        </ul>
+                    </div>
                     <a type="button" class="close" data-dismiss="modal">&times;</a>
                 </div>
-                <div id="modal-body-graphics">
+                <div class="modal-body">
                     <!-- renderer.domElement will go here. -->
                 </div>
             </div>
@@ -45,6 +54,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script>
     <script src="http://users.cis.fiu.edu/~akaip002/js-libraries/OBJLoader.js"></script>
     <script src="http://users.cis.fiu.edu/~akaip002/js-libraries/OrbitControls.js"></script>
+    <script src="http://users.cis.fiu.edu/~akaip002/js-libraries/OculusRiftEffect.js"></script>
 
     <script src="js/preview-objs.js"></script>
 

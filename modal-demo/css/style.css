@@ -8,8 +8,12 @@
 /* Remove those nasty rounded corners from modals. We like SHARP EDGES.  */
 .modal-content  {
 
-    border-radius: 0px !important;
+    border-radius: 0px;
 
+}
+
+canvas {
+    width: 100%;
 }
 
 /* Center the title between the buttons. */
@@ -21,16 +25,11 @@
 
 }
 
-/* Prevent the canvas from overflowing the modal, while centering it too. */
-canvas {
+/* Prevent the canvas from overflowing the modal, while centering it too.
+   Remove that weird white 5px line from the bottom of the modal. */
+.modal-body {
 
-    width: 100%;
-
-}
-
-/* Remove that weird white 5px line from the bottom of the modal. */
-#modal-body-graphics {
-
+    padding: 0;
     margin-bottom: -5px;
 
- }
+}

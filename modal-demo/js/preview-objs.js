@@ -6,8 +6,23 @@
 
     var scene, camera, renderer, cameraControls;
 
+    var ocRiftButtonDown = false;
+    var ocRiftEffect;
+
     // We make a global object for easy "removal" from the scene.
     var loadedObject = new THREE.Group();
+
+
+    // Toggle the oculus rift effect flag when the button is clicked.
+    $('.ocrift-view-btn').click( function() {
+        if ( ocRiftButtonDown == false ) {
+            ocRiftButtonDown = true;
+        }
+        else {
+            ocRiftButtonDown = false;
+            renderer.setSize( $('canvas').width(), $('canvas').height() );
+        }
+    });
 
 
     (function init() {
@@ -17,18 +32,27 @@
 
         // Renderer.
         renderer = new THREE.WebGLRenderer( { alpha: true } );
-        renderer.setClearColor( 0x010101, 0.1 );
-        renderer.setSize( window.innerWidth, window.innerHeight, false );
-        $('#modal-body-graphics').append( renderer.domElement );
 
-        var aspectRatio = window.innerWidth / window.innerHeight;
-        var verticalFOV = 80; // in degs
+        // Stupid trick to use the width of Bootstrap's modal for the renderer's size.
+        $('#preview-obj-modal').modal('show');
+        renderer.setSize( $('.modal-lg').width(), $('.modal-lg').width() / 2 );
+        $('#preview-obj-modal').modal('hide');
+
+        renderer.setClearColor( 0x010101, 0.1 );
+        $('.modal-body').append( renderer.domElement );
+
+        // Make oculus rift effect.
+        ocRiftEffect = new THREE.OculusRiftEffect( renderer, { worldScale: 1 } );
+        ocRiftEffect.setSize( renderer.getSize().width, renderer.getSize().height );
+
+        // Do the camera stuff.
+        var aspectRatio = 2; // aspect ratio of 2:1, equivalent to the renderer's width/height ratio.
+        var verticalFOV = 50; // in degs.
         var nearPlane = 0.1;
         var farPlane = 50;
         camera = new THREE.PerspectiveCamera( verticalFOV, aspectRatio, nearPlane, farPlane );
-        camera.position.set( 0, 1, 1.5 );
+        camera.position.set( 0, 1, 3 );
         scene.add( camera );
-
 
         // Camera controls.
         cameraControls = new THREE.OrbitControls( camera, renderer.domElement );
@@ -50,14 +74,16 @@
 
         requestAnimationFrame( animate );
         cameraControls.update();
-        renderer.render( scene, camera );
+        if ( ! ocRiftButtonDown )
+            renderer.render( scene, camera );
+        else
+            ocRiftEffect.render( scene, camera );
 
     })();
 
 
-    // On an image click, get the data-obj-ul and load it into the scene.
-    // If the object was already loaded into the scene, don't add it into the scene,
-    // just mark it visible and change its colors.
+    // On an image click, get the data-obj-url and load the corresponding obj into the scene.
+    // If the object was already loaded into the scene, just mark it visible and change its colors.
     $("img").click( function( event ) {
 
         var originImage = event.target;
@@ -65,9 +91,9 @@
         var fileName = objURL.slice( objURL.lastIndexOf('/') + 1 );
 
         $('.modal-title').text( fileName );
-        $('.download-obj').attr( 'href', objURL );
+        $('.download-obj-btn').attr( 'href', objURL );
 
-        // Detect if this file has already been loaded into the scene, and if so assign it to loadedObject.
+        // Detect if this file has already been loaded into the scene, and if so - assign it to loadedObject.
         var objAlreadyInScene = scene.children.some( function( child ) {
             return (child.__originImage__ === originImage) && (loadedObject = child);
         });
@@ -101,7 +127,7 @@
     $('#preview-obj-modal').on('hidden.bs.modal', function () {
 
         cameraControls.reset();
-        camera.position.set( 0, 1, 1.5 );
+        camera.position.set( 0, 1, 3 );
         loadedObject.visible = false;
 
     });
@@ -131,82 +157,35 @@
         },
 
         start: function() {
-            renderer.__originalHeight__ = $('canvas').height();
+            renderer.__originalHeight__ = renderer.getSize().height;
             camera.__tanFOV__ = Math.tan( ((Math.PI / 180) * camera.fov / 2) ); // in degs
         },
 
         resize: function( event, ui ) {
             renderer.setSize( $('canvas').width(), $('canvas').height() );
+            ocRiftEffect.setSize( $('canvas').width(), $('canvas').height() );
             camera.aspect = $('canvas').width() / $('canvas').height();
-            camera.fov = (360 / Math.PI) * Math.atan( camera.__tanFOV__ * ($('canvas').height() / renderer.__originalHeight__) );
+            camera.fov = (360 / Math.PI) * Math.atan( camera.__tanFOV__ * (renderer.getSize().height / renderer.__originalHeight__) );
             camera.updateProjectionMatrix();
         }
 
     });
 
-    // Makes the modal draggable by its header, but not on the text.
-    $('.modal').draggable({
-
-        handle: '.modal-header',
-        cancel: '.modal-header h4',
-        appendTo: 'body'
-
-    });
-
-    var startingCanvasWidth = $('canvas').width();
-    var startingCanvasHeight = $('canvas').height();
 
     $(window).resize( function() {
 
+        // Remove the new styles the jQuery UI resizable gives these two elements.
+        // This allows for the Bootstrap CSS to responsively resize the modal instead.
         $('.modal-dialog').removeAttr( 'style' );
         $('canvas').removeAttr( 'style' );
 
+        renderer.setSize( $('canvas').width(), $('canvas').height() );
+        ocRiftEffect.setSize( $('canvas').width(), $('canvas').height() );
 
         $('.modal-dialog').resizable( 'option', 'minWidth', 0.3 * window.innerWidth );
         $('.modal-dialog').resizable( 'option', 'minHeight', 0.4 * window.innerHeight );
         $('.modal-dialog').resizable( 'option', 'maxWidth', 0.9 * window.innerWidth );
         $('.modal-dialog').resizable( 'option', 'maxHeight', 0.9 * window.innerHeight );
-        // $('.modal-dialog').css( 'position', 'relative' );
-        // $('.modal-dialog').css( 'width', startingModalWidth );
-        // $('.modal-dialog').css( 'height', startingModalHeight );
-        // $('.modal').modal('hide');
-                    // renderer.setSize( $('canvas').width(), $('canvas').height() );
-        // camera.aspect = window.innerWidth / window.innerHeight;
-        // camera.updateProjectionMatrix();
-
-        // var currentMinWidth = $('.modal-dialog').resizable( 'option', 'minWidth' );
-        // var currentMinHeight = $('.modal-dialog').resizable( 'option', 'minHeight' );
-        // var currentMaxWidth = $('.modal-dialog').resizable( 'option', 'maxWidth' );
-        // var currentMaxHeight = $('.modal-dialog').resizable( 'option', 'maxHeight' );
-
-        // proportions, yo.
-        //
-
-        //
-        // var percentChangeWidth = startingModalWidth / startingWindowWidth;
-        // var percentChangeHeight = startingModalHeight / startingWindowHeight;
-        //
-        // var newModalWidth = window.innerWidth * percentChangeWidth;
-        // var newModalHeight = window.innerHeight * percentChangeHeight;
-        //
-            // renderer.setSize( $('canvas').width(), $('canvas').height() );
-        // $('.modal-dialog').width( startingModalWidth );
-        // $('.modal-dialog').height( startingModalHeight );
-
-
-        //
-        // var newCanvasWidth = 0.3 * $('canvas').width();
-        // var newCanvasHeight = 0.4 * $('canvas').height();
-        //
-        // $('canvas').width( startingCanvasWidth );
-        // $('canvas').height( startingCanvasHeight );
-
-            //
-        // // //
-        // $('.modal-dialog').width( 0.5 * window.innerWidth );
-        // $('.modal-dialog').height( 0.6 * window.innerHeight );
-        // $('canvas').width( 0.5 * window.innerWidth );
-        // $('canvas').height( 0.531 * window.innerHeight );
 
     });
 
@@ -267,12 +246,12 @@
 
     }
 
-
     // With r74 OBJLoader, o and g tags are processed as their own separate meshes (and hence their own geometries).
     // Because of this, we have to jump through a couple of hoops to normalize and center the entire object properly.
     // This function is rather overkill for obj files that contain no groups, but it's necessary if we want
     // to be able to correctly display obj files that will produce several meshes. The alternative is to strip out
-    // all of the group tags when parsing, but then we won't be able to assing different colors to each mesh!
+    // all of the group tags when parsing, but then we won't be able to assign different colors to each mesh!
+    // Note: This does not make each mesh's geometry its own center! But we don't care about that here.
     function normalizeAndCenterObject( object ) {
 
         // Merge all of the geometries to find the the total bounding sphere for the loadedObject.
