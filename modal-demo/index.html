@@ -32,9 +32,15 @@
                             Options <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a href="#" class="download-obj-btn"><i class="glyphicon glyphicon-arrow-down"></i> Download</a></li>
+                            <li>
+                                <a href="#" class="download-obj-btn"><i class="glyphicon glyphicon-arrow-down"></i> Download</a>
+                            </li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#" class="ocrift-view-btn"><i class="glyphicon glyphicon-sunglasses"></i> Oculus Rift View</a></li>
+                            <li>
+                                <a href="#" class="toggle-view-btn">
+                                <i class="glyphicon glyphicon-sunglasses"></i><span class="toggle-view-text"> Stereoscopic View</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <a type="button" class="close" data-dismiss="modal">&times;</a>
@@ -52,9 +58,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script>
-    <script src="http://users.cis.fiu.edu/~akaip002/js-libraries/OBJLoader.js"></script>
-    <script src="http://users.cis.fiu.edu/~akaip002/js-libraries/OrbitControls.js"></script>
-    <script src="http://users.cis.fiu.edu/~akaip002/js-libraries/OculusRiftEffect.js"></script>
+
+    <script src="js/OBJLoader.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/StereoEffect.js"></script>
 
     <script src="js/preview-objs.js"></script>
 
