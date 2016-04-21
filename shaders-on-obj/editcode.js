@@ -21,7 +21,7 @@ function initCodeMirror() {
     code.domElement.style.bottom = "25px";
     code.domElement.style.left = "25px";
     code.domElement.style.height = "auto";
-    code.domElement.style.width = "50%";
+    code.domElement.style.width = "40%";
     code.domElement.style.opacity = "0.8";
     code.refresh();
 
