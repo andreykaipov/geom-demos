@@ -1,5 +1,8 @@
 /**
  * @author Andrey Kaipov / https://github.com/andreykaipov
+ *
+ * This script handles the modal preview of .obj models.
+ *
  */
 
 (function() {
@@ -7,13 +10,16 @@
     // Stuff.
     var scene, camera, renderer, stereoEffect, cameraControls;
 
-    // Stereoscopic view off by default.
-    var stereoView = false;
-
     // We make a global object for easy "removal" from the scene.
     var loadedObject = new THREE.Group();
 
-    // Toggle the stereoscopic view when the button is clicked.
+    // Stereoscopic view off by default.
+    var stereoView = false;
+
+    // This is for stopping the recursion caused by requestAnimationFrame.
+    var requestID;
+
+    // Toggle the stereoscopic view when the button is clicked, and render the scene.
     $('.toggle-view-btn').click( function() {
 
         if ( stereoView ) {
@@ -71,20 +77,6 @@
 
     })();
 
-    // Continuously draw the scene and update controls.
-    (function animate() {
-
-        requestAnimationFrame( animate );
-        // cameraControls .update(); // Do I need this..?
-        if ( stereoView ) {
-            stereoEffect.render( scene, camera );
-        }
-        else {
-            renderer.render( scene, camera );
-        }
-
-    })();
-
     // On an image click, get the data-obj-url and load the corresponding obj into the scene.
     // If the object was already loaded into the scene, just mark it visible and change its colors.
     $('img').click( function( event ) {
@@ -112,10 +104,10 @@
 
                     loadedObject = new THREE.OBJLoader().parse( triangulateConvex( fileAsString ) );
 
+                    loadedObject.userData.originImage = event.target; // Mark origin image.
+
                     normalizeAndCenterObject( loadedObject );
                     assignMaterialsToObject( loadedObject );
-
-                    loadedObject.userData.originImage = event.target; // Mark origin image.
 
                     scene.add( loadedObject );
 
@@ -125,12 +117,34 @@
 
     });
 
-    // When we click outside the modal, reset the controls, reset the camera, and make the loadedObject invisible.
+    // When the modal is open, continuously render the scene appropriately.
+    $('#preview-obj-modal').on('show.bs.modal', function () {
+
+        (function animate() {
+
+            requestID = window.requestAnimationFrame( animate );
+
+            if ( stereoView ) {
+                stereoEffect.render( scene, camera );
+            }
+            else {
+                renderer.render( scene, camera );
+            }
+
+            cameraControls.update();
+
+        })();
+
+    });
+
+    // When we click outside the modal, reset the scene appropriately, and stop the animation.
     $('#preview-obj-modal').on('hidden.bs.modal', function () {
 
         cameraControls.reset();
         camera.position.set( 0, 1, 3 );
         loadedObject.visible = false;
+
+        window.cancelAnimationFrame( requestID );
 
     });
 
